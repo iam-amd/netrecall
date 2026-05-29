@@ -1,103 +1,141 @@
-const customers = [
+const callers = [
   {
     id: "priya",
     name: "Priya Sharma",
-    phone: "+91 98765 01001",
-    account: "NET-2026-0142",
+    first: "Priya",
+    initials: "PS",
     status: "Active",
-    statusType: "success",
+    statusType: "green",
+    summary: "Expires in 8 days - Sector 4",
+    ringing: true,
+    account: "NET-2026-0142",
+    phone: "+91 98765 01001",
     plan: "100 Mbps fiber",
-    planRisk: "Expires in 8 days",
     equipment: "TP-Link XZ-000 ONT",
     area: "Sector 4",
-    frustration: "6.8 / 10",
-    repeatIssue: "ONT red light x3",
-    areaSignal: "Sector 4 alert",
     lastFix: "OLT port reboot held for 3 days",
-    tickets: [
+    metrics: {
+      planRisk: "Expires in 8 days",
+      frustration: "6.8",
+      repeated: "ONT red light x3",
+      area: "Sector 4 alert",
+    },
+    history: [
       ["Apr 18", "ONT red LOS light", "Remote reboot fixed issue for 72 hours."],
       ["May 03", "Evening drops", "OLT port J2 showed recurring packet loss."],
       ["May 21", "Same ONT fault", "Field visit recommended if issue returns."],
-    ],
-    memory: [
-      ["Customer bank", "Three similar ONT LOS complaints in six weeks."],
-      ["Network bank", "Two nearby Sector 4 customers reported packet loss today."],
-      ["Resolution bank", "Temporary reboots worked briefly; field visit is next best action."],
     ],
   },
   {
     id: "deepika",
     name: "Deepika Rao",
-    phone: "+91 98765 01002",
-    account: "NET-2026-0198",
+    first: "Deepika",
+    initials: "DR",
     status: "Suspended",
-    statusType: "danger",
-    plan: "50 Mbps fiber",
-    planRisk: "Suspended 28 days",
-    equipment: "Nokia G-2425G-A router",
+    statusType: "orange",
+    summary: "Suspended 28 days - Sector 9",
+    ringing: false,
+    account: "NET-2025-0098",
+    phone: "+91 98765 04420",
+    plan: "200 Mbps fiber",
+    equipment: "Nokia G-010 ONT",
     area: "Sector 9",
-    frustration: "8.1 / 10",
-    repeatIssue: "Billing and speed",
-    areaSignal: "No outage",
-    lastFix: "Billing waiver restored service last month",
-    tickets: [
-      ["Apr 02", "Payment not reflected", "Manual reconciliation restored plan."],
-      ["Apr 29", "Slow speeds", "Router channel changed after congestion check."],
-      ["May 17", "Account suspended", "Customer asked for renewal options."],
-    ],
-    memory: [
-      ["Customer bank", "Deepika had a previous payment reconciliation issue."],
-      ["Policy bank", "Suspended users can be offered a payment link and waiver review."],
-      ["Resolution bank", "Do not start with router reboot when account status is suspended."],
+    lastFix: "Payment retry link sent",
+    metrics: {
+      planRisk: "Suspended 28 days",
+      frustration: "4.2",
+      repeated: "Billing dispute x2",
+      area: "Sector 9 stable",
+    },
+    history: [
+      ["Apr 02", "Auto-pay failed", "Card expired; retry link sent to customer."],
+      ["Apr 30", "Service suspended", "Non-payment after three reminders."],
+      ["May 15", "Reactivation query", "Customer asked about restoring the plan."],
     ],
   },
   {
     id: "vikram",
     name: "Vikram Singh",
-    phone: "+91 98765 01004",
-    account: "NET-2026-0221",
+    first: "Vikram",
+    initials: "VS",
     status: "Active",
-    statusType: "warning",
-    plan: "200 Mbps fiber",
-    planRisk: "Expires in 2 days",
-    equipment: "Huawei EG8145V5 ONT",
+    statusType: "green",
+    summary: "Expires in 2 days - Sector 2",
+    ringing: false,
+    account: "NET-2026-0311",
+    phone: "+91 98765 07788",
+    plan: "300 Mbps fiber",
+    equipment: "TP-Link XZ-200 ONT",
     area: "Sector 2",
-    frustration: "4.9 / 10",
-    repeatIssue: "Renewal question",
-    areaSignal: "Healthy",
-    lastFix: "Plan upgrade solved bandwidth complaints",
-    tickets: [
-      ["Mar 30", "Low upload speed", "Upgraded to 200 Mbps plan."],
-      ["Apr 26", "Renewal reminder", "Customer wanted annual plan quote."],
-      ["May 24", "Streaming buffering", "No network issue; advised mesh placement."],
-    ],
-    memory: [
-      ["Customer bank", "Vikram prefers annual renewal when discount is clear."],
-      ["Network bank", "Sector 2 has normal latency and no incident today."],
-      ["Resolution bank", "Mesh placement advice solved the last streaming complaint."],
+    lastFix: "Speed profile re-provisioned",
+    metrics: {
+      planRisk: "Expires in 2 days",
+      frustration: "5.5",
+      repeated: "Slow speeds x2",
+      area: "Sector 2 congestion",
+    },
+    history: [
+      ["Mar 22", "Speed complaint", "Provisioned profile mismatch corrected."],
+      ["May 10", "Peak-hour slowdown", "Sector 2 congestion noted on the OLT."],
+      ["May 26", "Renewal reminder", "Plan expiring; offered upgrade to 500 Mbps."],
     ],
   },
 ];
+
+const genericReply =
+  "Please restart your router and ONT, check the fiber cable, and wait five minutes. If the issue continues, contact support again so we can create a ticket.";
 
 const genericEvidence = [
   ["No memory", "The agent has no customer history, equipment data, area context, or prior fixes."],
   ["Generic playbook", "Suggested response falls back to restart router, check cables, and wait."],
 ];
 
-let selectedCustomer = customers[0];
+let selected = callers[0];
 let memoryOn = true;
 let chat = [];
 
 const $ = (id) => document.getElementById(id);
 
-function renderCustomerButtons() {
-  $("customer-list").innerHTML = customers
+function responseFor(message) {
+  if (!memoryOn) return genericReply;
+
+  const text = message.toLowerCase();
+  if (selected.status === "Suspended") {
+    return `I understand, ${selected.first}. I can see the account is suspended and the last fix was "${selected.lastFix}", so I will not start with router steps. I will send the reactivation link, check the earlier billing dispute, and keep a waiver review ready if payment was already made.`;
+  }
+
+  if (text.includes("third") || text.includes("same problem") || text.includes("again")) {
+    return `I completely understand, ${selected.first}, and you are right. Your account shows ${selected.metrics.repeated.toLowerCase()} and "${selected.lastFix}" did not hold. I will skip another restart and book a priority field visit with a service credit noted on the ticket.`;
+  }
+
+  if (text.includes("red") || text.includes("ont")) {
+    return `Thanks, ${selected.first}. That red light matches the recurring fault on your ${selected.equipment}. A remote reboot only held briefly, so I am dispatching a fiber technician to ${selected.area} instead of repeating the same temporary fix.`;
+  }
+
+  return `Hi ${selected.first}. I can see your line logged issues in ${selected.area}, and "${selected.lastFix}" only held briefly. Rather than another restart, I am escalating this to a field engineer today and you will get a confirmation SMS within the hour.`;
+}
+
+function evidenceFor() {
+  if (!memoryOn) return genericEvidence;
+  return [
+    ["Account history", `${selected.history.length} prior interactions on file, oldest ${selected.history[0][0]}.`],
+    ["Equipment data", `${selected.equipment}; last action: ${selected.lastFix.toLowerCase()}.`],
+    ["Area context", selected.metrics.area],
+    ["Prior fixes", selected.history[selected.history.length - 1][2]],
+  ];
+}
+
+function renderCallers() {
+  $("customer-list").innerHTML = callers
     .map(
-      (customer) => `
-        <button class="customer-button ${customer.id === selectedCustomer.id ? "active" : ""}"
-          data-customer="${customer.id}" type="button">
-          <strong>${customer.name}</strong>
-          <span>${customer.planRisk} | ${customer.area}</span>
+      (caller) => `
+        <button class="caller ${caller.id === selected.id ? "active" : ""}" type="button" data-customer="${caller.id}">
+          <span class="caller-avatar">${caller.initials}</span>
+          <span>
+            <span class="caller-name">${caller.name}</span>
+            <span class="caller-sub">${caller.summary}</span>
+          </span>
+          ${caller.ringing ? '<span class="caller-dot"></span>' : ""}
         </button>
       `,
     )
@@ -109,64 +147,82 @@ function setText(id, value) {
 }
 
 function renderCustomer() {
-  const c = selectedCustomer;
-  setText("caller-title", `${c.name} is calling`);
-  setText("plan-risk", c.planRisk);
-  setText("frustration", c.frustration);
-  setText("repeat-issue", c.repeatIssue);
-  setText("area-signal", c.areaSignal);
-  setText("customer-name", c.name);
-  setText("account", c.account);
-  setText("phone", c.phone);
-  setText("plan", c.plan);
-  setText("equipment", c.equipment);
-  setText("area", c.area);
-  setText("last-fix", c.lastFix);
-  setText("account-status", c.status);
-  $("account-status").className = `badge ${c.statusType}`;
-  $("ticket-timeline").innerHTML = c.tickets
+  setText("caller-title", selected.name);
+  setText("plan-risk", selected.metrics.planRisk);
+  setText("repeat-issue", selected.metrics.repeated);
+  setText("area-signal", selected.metrics.area);
+  setText("customer-name", selected.name);
+  setText("account", selected.account);
+  setText("phone", selected.phone);
+  setText("plan", selected.plan);
+  setText("equipment", selected.equipment);
+  setText("area", selected.area);
+  setText("last-fix", selected.lastFix);
+  setText("account-status", selected.status);
+
+  $("account-status").className = `badge ${selected.statusType}`;
+  $("status-pill").className = selected.ringing ? "status-pill" : "status-pill idle";
+  $("status-pill").innerHTML = `<span class="ring"></span>${selected.ringing ? "Ringing" : "Connected"}`;
+
+  const frustration = Number(selected.metrics.frustration);
+  $("frustration").className = `metric-value ${frustration >= 6.5 ? "bad" : frustration >= 5 ? "warn" : ""}`;
+  $("frustration").innerHTML = `${selected.metrics.frustration} <span>/ 10</span>`;
+
+  $("ticket-timeline").innerHTML = selected.history
     .map(
-      ([date, title, note]) => `
-        <div class="ticket">
-          <strong>${date} | ${title}</strong>
-          <span>${note}</span>
+      ([date, title, detail]) => `
+        <div class="tl-item">
+          <div class="tl-top"><span class="tl-date">${date}</span><span class="tl-title">${title}</span></div>
+          <div class="tl-detail">${detail}</div>
         </div>
       `,
     )
     .join("");
+
+  renderCallers();
+  renderMemoryMode();
   renderGuidance();
   renderChat();
-  renderCustomerButtons();
 }
 
-function generateMemoryResponse(message) {
-  const c = selectedCustomer;
-  if (!memoryOn) {
-    return "Please restart your router and ONT, check the fiber cable, and wait five minutes. If the issue continues, contact support again so we can create a ticket.";
-  }
+function renderMemoryMode() {
+  $("memory-toggle").className = memoryOn ? "switch on" : "switch";
+  $("memory-state").className = memoryOn ? "mem-state on" : "mem-state";
+  $("memory-state").textContent = memoryOn ? "On - full context" : "Off - generic playbook";
+  $("context-badge").className = memoryOn ? "badge green" : "badge orange";
+  $("context-badge").textContent = memoryOn ? "Full context" : "Low context";
 
-  if (c.status === "Suspended") {
-    return `${firstName(c.name)}, I can see your account is currently suspended, so I will not waste your time with router steps. I will send the renewal link, check the previous payment reconciliation issue, and keep a waiver review ready if the payment was already made.`;
+  document.querySelector(".dna-list").style.display = memoryOn ? "" : "none";
+  const dna = $("dna-content");
+  if (memoryOn) {
+    dna.style.display = "";
+  } else {
+    dna.style.display = "block";
+    $("ticket-timeline").innerHTML = `
+      <div class="ev-card empty">
+        <div class="ev-label">No customer record</div>
+        <div class="ev-detail">With memory off, the agent sees only the phone number. No account, equipment, area, or history is available.</div>
+      </div>
+    `;
   }
-
-  if (message.toLowerCase().includes("red") || message.toLowerCase().includes("drop")) {
-    return `${firstName(c.name)}, I can see this matches your earlier ${c.repeatIssue} pattern on the ${c.equipment}. The last reboot only held briefly, so I am escalating this to a field visit and OLT port check instead of repeating the same temporary fix.`;
-  }
-
-  return `${firstName(c.name)}, I have your ${c.plan}, ${c.equipment}, recent tickets, and area status in front of me. Based on your history, I will skip basic questions and move straight to the next proven fix.`;
 }
 
 function renderGuidance() {
-  const sample = chat.find((item) => item.role === "customer")?.text || "My internet keeps dropping every evening.";
-  $("copilot-card").textContent = generateMemoryResponse(sample);
-  $("confidence").textContent = memoryOn ? "93% confidence" : "Low context";
-  $("confidence").className = memoryOn ? "badge neutral" : "badge warning";
-  $("memory-evidence").innerHTML = (memoryOn ? selectedCustomer.memory : genericEvidence)
+  const lastCustomer = [...chat].reverse().find((item) => item.role === "customer");
+  const sample = lastCustomer?.text || "Hi, my internet keeps dropping every evening.";
+  $("copilot-card").className = memoryOn ? "answer" : "answer generic";
+  $("copilot-card").innerHTML = `
+    <div class="answer-tag ${memoryOn ? "smart" : "generic"}">
+      ${memoryOn ? "Memory-aware response" : "Generic playbook"}
+    </div>
+    ${responseFor(sample)}
+  `;
+  $("memory-evidence").innerHTML = evidenceFor()
     .map(
-      ([label, text]) => `
-        <div class="evidence">
-          <span>${label}</span>
-          <p>${text}</p>
+      ([label, detail]) => `
+        <div class="ev-card ${memoryOn ? "smart" : label === "No memory" ? "empty" : ""}">
+          <div class="ev-label">${label}</div>
+          <div class="ev-detail">${detail}</div>
         </div>
       `,
     )
@@ -177,25 +233,28 @@ function renderChat() {
   if (chat.length === 0) {
     chat = [
       { role: "customer", text: "Hi, my internet keeps dropping every evening." },
-      { role: "agent", text: generateMemoryResponse("Hi, my internet keeps dropping every evening.") },
+      { role: "agent", text: responseFor("Hi, my internet keeps dropping every evening.") },
     ];
   }
 
   $("chat-log").innerHTML = chat
-    .map((item) => `<div class="message ${item.role}">${item.text}</div>`)
+    .map(
+      (item) => `
+        <div class="bubble ${item.role}">
+          <div class="bubble-who">${item.role === "customer" ? selected.first : "Agent"}</div>
+          ${item.text}
+        </div>
+      `,
+    )
     .join("");
   $("chat-log").scrollTop = $("chat-log").scrollHeight;
-}
-
-function firstName(name) {
-  return name.split(" ")[0];
 }
 
 function sendMessage(message) {
   const clean = message.trim();
   if (!clean) return;
   chat.push({ role: "customer", text: clean });
-  chat.push({ role: "agent", text: generateMemoryResponse(clean) });
+  chat.push({ role: "agent", text: responseFor(clean) });
   renderGuidance();
   renderChat();
 }
@@ -203,23 +262,23 @@ function sendMessage(message) {
 document.addEventListener("click", (event) => {
   const customerButton = event.target.closest("[data-customer]");
   if (customerButton) {
-    selectedCustomer = customers.find((c) => c.id === customerButton.dataset.customer) || customers[0];
+    selected = callers.find((caller) => caller.id === customerButton.dataset.customer) || callers[0];
     chat = [];
     renderCustomer();
   }
 
   const scriptButton = event.target.closest("[data-message]");
   if (scriptButton) {
+    document.querySelectorAll(".script-btn").forEach((button) => button.classList.remove("active"));
+    scriptButton.classList.add("active");
     sendMessage(scriptButton.dataset.message);
   }
 });
 
-$("memory-toggle").addEventListener("change", (event) => {
-  memoryOn = event.target.checked;
-  $("memory-label").textContent = memoryOn ? "Memory on" : "Memory off";
+$("memory-toggle").addEventListener("click", () => {
+  memoryOn = !memoryOn;
   chat = [];
-  renderGuidance();
-  renderChat();
+  renderCustomer();
 });
 
 $("message-form").addEventListener("submit", (event) => {

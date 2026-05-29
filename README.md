@@ -4,7 +4,7 @@ ISP support AI that remembers customer history before the agent picks up.
 
 This repo now has two demo paths:
 
-1. `index.html` is a Vercel-ready interactive web demo. It needs no API keys and is built for recruiters, judges, and quick portfolio review.
+1. `index.html` is an Apple-style Vercel-ready interactive web demo. It needs no API keys and is built for recruiters, judges, and quick portfolio review.
 2. `netrecall/` contains the full Streamlit + FastAPI + Twilio + Groq + Hindsight implementation for the real support workflow.
 
 ## Live Web Demo
@@ -50,4 +50,4 @@ For real AI memory and phone-call behavior, copy `netrecall/.env.example` to `ne
 - Memory ON/OFF contrast for generic vs memory-aware support
 - AI co-pilot guidance with recalled evidence
 - Customer transcript simulator for quick testing
-- Responsive layout for desktop and mobile review
+- Soft Apple-inspired dashboard UI with responsive desktop and mobile layouts

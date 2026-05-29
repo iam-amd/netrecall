@@ -3,158 +3,161 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NetRecall Demo</title>
+    <title>NetRecall</title>
     <meta
       name="description"
-      content="Vercel-ready interactive demo for NetRecall, an ISP support AI with customer memory."
+      content="Apple-style interactive demo for NetRecall, an ISP support AI with customer memory."
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="shell">
+    <div class="app">
       <aside class="sidebar" aria-label="Demo controls">
         <div class="brand">
           <div class="brand-mark">NR</div>
           <div>
-            <h1>NetRecall</h1>
-            <p>ISP support AI with customer memory</p>
+            <div class="brand-name">NetRecall</div>
+            <div class="brand-sub">ISP support AI with customer memory</div>
           </div>
         </div>
 
-        <section class="control-block">
-          <div class="section-label">Incoming caller</div>
-          <div id="customer-list" class="customer-list"></div>
+        <section class="side-group">
+          <div class="side-label">Incoming callers</div>
+          <div id="customer-list" class="caller-list"></div>
         </section>
 
-        <section class="control-block">
-          <div class="section-label">Memory mode</div>
-          <label class="toggle-row">
-            <input id="memory-toggle" type="checkbox" checked />
-            <span class="toggle-track" aria-hidden="true"></span>
-            <span id="memory-label">Memory on</span>
-          </label>
+        <section class="side-group">
+          <div class="side-label">Memory mode</div>
+          <div class="mem-row">
+            <div class="mem-text">
+              <div class="mem-title">Customer memory</div>
+              <div id="memory-state" class="mem-state on">On - full context</div>
+            </div>
+            <button id="memory-toggle" class="switch on" type="button" aria-label="Toggle customer memory"></button>
+          </div>
         </section>
 
-        <section class="control-block">
-          <div class="section-label">Demo script</div>
-          <button class="script-button" data-message="My internet keeps dropping every evening.">
+        <section class="side-group scripts">
+          <div class="side-label">Demo script</div>
+          <button class="script-btn active" type="button" data-message="Hi, my internet keeps dropping every evening.">
             Evening drops
+            <span class="chev">›</span>
           </button>
-          <button class="script-button" data-message="This is the third time this month and I am frustrated.">
+          <button class="script-btn" type="button" data-message="This is the third time I am calling about the same problem.">
             Repeat issue
+            <span class="chev">›</span>
           </button>
-          <button class="script-button" data-message="The ONT red LOS light is blinking again.">
+          <button class="script-btn" type="button" data-message="There is a red light blinking on my ONT box again.">
             ONT red light
+            <span class="chev">›</span>
           </button>
         </section>
       </aside>
 
-      <section class="workspace" aria-label="NetRecall support workspace">
-        <header class="topbar">
-          <div>
-            <div class="eyebrow">Live support command center</div>
-            <h2 id="caller-title">Priya Sharma is calling</h2>
-          </div>
-          <div class="status-pill">
-            <span class="pulse"></span>
-            <span>Ringing</span>
-          </div>
-        </header>
-
-        <section class="metrics" aria-label="Pre-call intelligence">
-          <article>
-            <span>Plan risk</span>
-            <strong id="plan-risk">Expires in 8 days</strong>
-          </article>
-          <article>
-            <span>Frustration</span>
-            <strong id="frustration">6.8 / 10</strong>
-          </article>
-          <article>
-            <span>Repeated issue</span>
-            <strong id="repeat-issue">ONT red light x3</strong>
-          </article>
-          <article>
-            <span>Area signal</span>
-            <strong id="area-signal">Sector 4 alert</strong>
-          </article>
-        </section>
-
-        <section class="main-grid">
-          <article class="panel customer-panel">
-            <div class="panel-head">
-              <div>
-                <span class="section-label">Customer DNA</span>
-                <h3 id="customer-name">Priya Sharma</h3>
-              </div>
-              <span id="account-status" class="badge success">Active</span>
+      <main class="main">
+        <div class="main-inner">
+          <header class="topbar">
+            <div>
+              <div class="eyebrow">Live support command center</div>
+              <h1 class="title"><span id="caller-title">Priya Sharma</span> <span class="muted">is calling</span></h1>
             </div>
-            <dl class="dna-list">
-              <div>
-                <dt>Account</dt>
-                <dd id="account">NET-2026-0142</dd>
-              </div>
-              <div>
-                <dt>Phone</dt>
-                <dd id="phone">+91 98765 01001</dd>
-              </div>
-              <div>
-                <dt>Plan</dt>
-                <dd id="plan">100 Mbps fiber</dd>
-              </div>
-              <div>
-                <dt>Equipment</dt>
-                <dd id="equipment">TP-Link XZ-000 ONT</dd>
-              </div>
-              <div>
-                <dt>Area</dt>
-                <dd id="area">Sector 4</dd>
-              </div>
-              <div>
-                <dt>Last fix</dt>
-                <dd id="last-fix">OLT port reboot held for 3 days</dd>
-              </div>
-            </dl>
-            <div class="timeline" id="ticket-timeline"></div>
-          </article>
+            <div id="status-pill" class="status-pill">
+              <span class="ring"></span>
+              Ringing
+            </div>
+          </header>
 
-          <article class="panel copilot-panel">
-            <div class="panel-head">
-              <div>
-                <span class="section-label">AI co-pilot</span>
-                <h3>Say this now</h3>
+          <section class="metrics" aria-label="Pre-call intelligence">
+            <article class="metric">
+              <div class="metric-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                Plan risk
               </div>
-              <span id="confidence" class="badge neutral">93% confidence</span>
-            </div>
-            <div id="copilot-card" class="guidance-card"></div>
-            <div class="memory-evidence">
-              <div class="section-label">Memory evidence</div>
-              <div id="memory-evidence" class="evidence-list"></div>
-            </div>
-          </article>
+              <div id="plan-risk" class="metric-value">Expires in 8 days</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2 6 4-14 2 8h6"></path></svg>
+                Frustration
+              </div>
+              <div id="frustration" class="metric-value bad">6.8 <span>/ 10</span></div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+                Repeated issue
+              </div>
+              <div id="repeat-issue" class="metric-value">ONT red light x3</div>
+            </article>
+            <article class="metric">
+              <div class="metric-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h.01"></path><path d="M7 20v-4"></path><path d="M12 20v-8"></path><path d="M17 20V8"></path><path d="M22 4v16"></path></svg>
+                Area signal
+              </div>
+              <div id="area-signal" class="metric-value">Sector 4 alert</div>
+            </article>
+          </section>
 
-          <article class="panel chat-panel">
-            <div class="panel-head">
-              <div>
-                <span class="section-label">Transcript simulator</span>
-                <h3>Customer conversation</h3>
+          <section class="columns">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <div class="panel-eyebrow">Customer DNA</div>
+                  <h2 id="customer-name" class="panel-title">Priya Sharma</h2>
+                </div>
+                <span id="account-status" class="badge green">Active</span>
               </div>
-              <button id="reset-chat" class="icon-button" type="button" title="Reset transcript">Reset</button>
-            </div>
-            <div id="chat-log" class="chat-log" aria-live="polite"></div>
-            <form id="message-form" class="message-form">
-              <input
-                id="message-input"
-                type="text"
-                autocomplete="off"
-                placeholder="Type what the customer says..."
-              />
-              <button type="submit">Send</button>
-            </form>
-          </article>
-        </section>
-      </section>
-    </main>
+              <div class="panel-body">
+                <div id="dna-content">
+                  <div class="dna-list">
+                    <div class="dna-row"><span class="dna-k">Account</span><span id="account" class="dna-v">NET-2026-0142</span></div>
+                    <div class="dna-row"><span class="dna-k">Phone</span><span id="phone" class="dna-v">+91 98765 01001</span></div>
+                    <div class="dna-row"><span class="dna-k">Plan</span><span id="plan" class="dna-v">100 Mbps fiber</span></div>
+                    <div class="dna-row"><span class="dna-k">Equipment</span><span id="equipment" class="dna-v">TP-Link XZ-000 ONT</span></div>
+                    <div class="dna-row"><span class="dna-k">Area</span><span id="area" class="dna-v">Sector 4</span></div>
+                    <div class="dna-row"><span class="dna-k">Last fix</span><span id="last-fix" class="dna-v">OLT port reboot held for 3 days</span></div>
+                  </div>
+                  <div class="section-label">Interaction history</div>
+                  <div id="ticket-timeline" class="timeline"></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <div class="panel-eyebrow">AI co-pilot</div>
+                  <h2 class="panel-title">Say this now</h2>
+                </div>
+                <span id="context-badge" class="badge green">Full context</span>
+              </div>
+              <div class="panel-body">
+                <div id="copilot-card" class="answer"></div>
+                <div class="section-label">Memory evidence</div>
+                <div id="memory-evidence" class="evidence"></div>
+              </div>
+            </article>
+
+            <article class="panel chat">
+              <div class="panel-head">
+                <div>
+                  <div class="panel-eyebrow">Transcript simulator</div>
+                  <h2 class="panel-title">Customer conversation</h2>
+                </div>
+                <button id="reset-chat" class="ghost-btn" type="button">Reset</button>
+              </div>
+              <div class="panel-body">
+                <div id="chat-log" class="thread" aria-live="polite"></div>
+                <form id="message-form" class="composer">
+                  <input id="message-input" type="text" autocomplete="off" placeholder="Type what the customer says..." />
+                  <button id="send-button" class="send" type="submit">Send</button>
+                </form>
+              </div>
+            </article>
+          </section>
+        </div>
+      </main>
+    </div>
     <script src="./app.js"></script>
   </body>
 </html>
