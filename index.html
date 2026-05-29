@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NetRecall Demo</title>
+    <meta
+      name="description"
+      content="Vercel-ready interactive demo for NetRecall, an ISP support AI with customer memory."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar" aria-label="Demo controls">
+        <div class="brand">
+          <div class="brand-mark">NR</div>
+          <div>
+            <h1>NetRecall</h1>
+            <p>ISP support AI with customer memory</p>
+          </div>
+        </div>
+
+        <section class="control-block">
+          <div class="section-label">Incoming caller</div>
+          <div id="customer-list" class="customer-list"></div>
+        </section>
+
+        <section class="control-block">
+          <div class="section-label">Memory mode</div>
+          <label class="toggle-row">
+            <input id="memory-toggle" type="checkbox" checked />
+            <span class="toggle-track" aria-hidden="true"></span>
+            <span id="memory-label">Memory on</span>
+          </label>
+        </section>
+
+        <section class="control-block">
+          <div class="section-label">Demo script</div>
+          <button class="script-button" data-message="My internet keeps dropping every evening.">
+            Evening drops
+          </button>
+          <button class="script-button" data-message="This is the third time this month and I am frustrated.">
+            Repeat issue
+          </button>
+          <button class="script-button" data-message="The ONT red LOS light is blinking again.">
+            ONT red light
+          </button>
+        </section>
+      </aside>
+
+      <section class="workspace" aria-label="NetRecall support workspace">
+        <header class="topbar">
+          <div>
+            <div class="eyebrow">Live support command center</div>
+            <h2 id="caller-title">Priya Sharma is calling</h2>
+          </div>
+          <div class="status-pill">
+            <span class="pulse"></span>
+            <span>Ringing</span>
+          </div>
+        </header>
+
+        <section class="metrics" aria-label="Pre-call intelligence">
+          <article>
+            <span>Plan risk</span>
+            <strong id="plan-risk">Expires in 8 days</strong>
+          </article>
+          <article>
+            <span>Frustration</span>
+            <strong id="frustration">6.8 / 10</strong>
+          </article>
+          <article>
+            <span>Repeated issue</span>
+            <strong id="repeat-issue">ONT red light x3</strong>
+          </article>
+          <article>
+            <span>Area signal</span>
+            <strong id="area-signal">Sector 4 alert</strong>
+          </article>
+        </section>
+
+        <section class="main-grid">
+          <article class="panel customer-panel">
+            <div class="panel-head">
+              <div>
+                <span class="section-label">Customer DNA</span>
+                <h3 id="customer-name">Priya Sharma</h3>
+              </div>
+              <span id="account-status" class="badge success">Active</span>
+            </div>
+            <dl class="dna-list">
+              <div>
+                <dt>Account</dt>
+                <dd id="account">NET-2026-0142</dd>
+              </div>
+              <div>
+                <dt>Phone</dt>
+                <dd id="phone">+91 98765 01001</dd>
+              </div>
+              <div>
+                <dt>Plan</dt>
+                <dd id="plan">100 Mbps fiber</dd>
+              </div>
+              <div>
+                <dt>Equipment</dt>
+                <dd id="equipment">TP-Link XZ-000 ONT</dd>
+              </div>
+              <div>
+                <dt>Area</dt>
+                <dd id="area">Sector 4</dd>
+              </div>
+              <div>
+                <dt>Last fix</dt>
+                <dd id="last-fix">OLT port reboot held for 3 days</dd>
+              </div>
+            </dl>
+            <div class="timeline" id="ticket-timeline"></div>
+          </article>
+
+          <article class="panel copilot-panel">
+            <div class="panel-head">
+              <div>
+                <span class="section-label">AI co-pilot</span>
+                <h3>Say this now</h3>
+              </div>
+              <span id="confidence" class="badge neutral">93% confidence</span>
+            </div>
+            <div id="copilot-card" class="guidance-card"></div>
+            <div class="memory-evidence">
+              <div class="section-label">Memory evidence</div>
+              <div id="memory-evidence" class="evidence-list"></div>
+            </div>
+          </article>
+
+          <article class="panel chat-panel">
+            <div class="panel-head">
+              <div>
+                <span class="section-label">Transcript simulator</span>
+                <h3>Customer conversation</h3>
+              </div>
+              <button id="reset-chat" class="icon-button" type="button" title="Reset transcript">Reset</button>
+            </div>
+            <div id="chat-log" class="chat-log" aria-live="polite"></div>
+            <form id="message-form" class="message-form">
+              <input
+                id="message-input"
+                type="text"
+                autocomplete="off"
+                placeholder="Type what the customer says..."
+              />
+              <button type="submit">Send</button>
+            </form>
+          </article>
+        </section>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
